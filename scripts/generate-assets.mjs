@@ -1,21 +1,25 @@
 // Draws every raster asset of the site. Run with `npm run assets`; output is committed.
-//   - brand: favicon.ico (RGBA PNG payloads), icon.svg, apple-icon.png, mark and og card
+//   - brand: favicon.ico (RGBA PNG payloads), icon.svg, apple-icon.png, mark svg and og card.
+//            The 1024 px tile, mark and banner in public/brand are the brand artwork itself.
 //   - art:   one avatar per sample collection, six NFTs per collection, one logo per sample coin
 // All art is procedural pixel sprites, seeded from src/content/catalog.json.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import sharp from "sharp";
-import { INK, NIGHT, PULSE, markShapes } from "./brand-mark.mjs";
+import { markShapes } from "./brand-mark.mjs";
 
 const catalog = JSON.parse(await readFile(new URL("../src/content/catalog.json", import.meta.url), "utf8"));
 
 /* ---------- brand ---------- */
 
-const tile = (size) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="15" fill="${NIGHT}"/>
-  <g transform="translate(6 5) scale(0.8125)">${markShapes(PULSE)}</g>
+// White mark on a black tile, as in the brand artwork. `inner` is the mark width
+// in tile units; small icons carry it larger so it still reads at 16 px.
+const TILE = "#000000";
+const tile = (size, inner = 38) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="${TILE}"/>
+  <g transform="translate(${(64 - inner) / 2} ${(64 - inner) / 2}) scale(${inner / 64})">${markShapes("#ffffff")}</g>
 </svg>`;
 
-const bare = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${markShapes(PULSE)}</svg>`;
+const bare = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${markShapes("#ffffff")}</svg>`;
 
 async function png(svg, size) {
   return sharp(Buffer.from(svg), { density: 384 }).resize(size, size).ensureAlpha().png().toBuffer();
@@ -118,12 +122,10 @@ await mkdir("public/art/collections", { recursive: true });
 await mkdir("public/art/nfts", { recursive: true });
 await mkdir("public/art/coins", { recursive: true });
 
-await writeFile("src/app/icon.svg", tile(64));
+await writeFile("src/app/icon.svg", tile(64, 46));
 await writeFile("public/brand/arterial-mark.svg", bare);
-await writeFile("src/app/favicon.ico", ico(await Promise.all([16, 32, 48].map(async (size) => ({ size, data: await png(tile(size), size) })))));
-await sharp(Buffer.from(tile(180)), { density: 384 }).resize(180, 180).flatten({ background: NIGHT }).png().toFile("src/app/apple-icon.png");
-await sharp(Buffer.from(tile(512)), { density: 384 }).resize(512, 512).webp({ quality: 92 }).toFile("public/brand/arterial-icon.webp");
-await sharp(Buffer.from(bare), { density: 384 }).resize(512, 512).webp({ quality: 92 }).toFile("public/brand/arterial-mark.webp");
+await writeFile("src/app/favicon.ico", ico(await Promise.all([16, 32, 48].map(async (size) => ({ size, data: await png(tile(size, 48), size) })))));
+await sharp(Buffer.from(tile(180)), { density: 384 }).resize(180, 180).flatten({ background: TILE }).png().toFile("src/app/apple-icon.png");
 
 for (const col of catalog.collections) {
   await webp(sprite(col), `public/art/collections/${col.slug}.webp`, 256);
@@ -143,19 +145,11 @@ for (const coin of catalog.coins) {
   await webp(sprite({ seed: coin.seed * 7919, bg: shade(col.bg, -0.25), body: col.accent, accent: col.body }), `public/art/coins/${coin.ticker.toLowerCase()}.webp`, 192);
 }
 
-// Social card: mark, name, slogan, and a row of streams feeding five sprites.
-const heroCols = catalog.collections.slice(0, 5);
-const spriteImgs = await Promise.all(heroCols.map(async (c) => (await sharp(Buffer.from(sprite(c))).resize(150, 150, { kernel: "nearest" }).png().toBuffer()).toString("base64")));
+// Social card: the brand banner, widened onto black, with the ticker line.
+const banner = await sharp("public/brand/arterial-banner.webp").resize(1200, 400).toBuffer();
 const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="${NIGHT}"/>
-  <g transform="translate(80 78) scale(1.5)">${markShapes(PULSE)}</g>
-  <text x="200" y="140" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="600" fill="${INK}">Arterial</text>
-  <text x="80" y="262" font-family="Helvetica, Arial, sans-serif" font-size="50" font-weight="500" fill="${INK}">Memecoin fees flowing live</text>
-  <text x="80" y="322" font-family="Helvetica, Arial, sans-serif" font-size="50" font-weight="500" fill="${INK}">to NFT collections.</text>
-  <text x="80" y="376" font-family="Menlo, monospace" font-size="22" fill="#efe8e299">$ARTERIAL · Robinhood Chain · arterial.live</text>
-  <path d="M80 412 H1120" stroke="${PULSE}" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-  ${heroCols.map((_, i) => `<path d="M${170 + i * 205} 412 V444" stroke="${PULSE}" stroke-width="4" stroke-linecap="round" stroke-dasharray="5 7"/>`).join("")}
-  ${spriteImgs.map((b, i) => `<g><rect x="${95 + i * 205}" y="448" width="150" height="150" rx="18" fill="#221f1d"/><image x="${95 + i * 205}" y="448" width="150" height="150" href="data:image/png;base64,${b}" clip-path="inset(0 round 18px)"/></g>`).join("")}
+  <rect width="1200" height="630" fill="#000000"/>
+  <text x="600" y="560" text-anchor="middle" font-family="Menlo, monospace" font-size="22" letter-spacing="2" fill="#efe8e2aa">$ARTERIAL · Memecoin fees flowing live to NFT collections · arterial.live</text>
 </svg>`;
-await sharp(Buffer.from(og)).webp({ quality: 90 }).toFile("public/brand/og.webp");
+await sharp(Buffer.from(og)).composite([{ input: banner, left: 0, top: 70 }]).webp({ quality: 90 }).toFile("public/brand/og.webp");
 console.log(`assets written: ${catalog.collections.length} collections, ${catalog.collections.length * 6} nfts, ${catalog.coins.length} coins`);

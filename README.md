@@ -63,7 +63,8 @@ Optional environment variables (put them in `.env.local`, or in your host's envi
 
 Without either one the site uses the public endpoint and works as is.
 
-`npm run assets` redraws the icons, the social card and all the pixel art from `src/content/catalog.json`.
+`npm run assets` redraws the icons, the social card (built on `public/brand/arterial-banner.webp`) and all the pixel art
+from `src/content/catalog.json`. The mark, tile and banner in `public/brand/` are the brand artwork itself.
 
 ## Add Robinhood Chain to your wallet
 

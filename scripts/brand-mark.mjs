@@ -1,17 +1,13 @@
-// The Arterial mark: three fee streams merging into one vault node.
-// Drawn in a 64-unit box. src/components/Logo.tsx renders the same shapes.
+// The Arterial mark: three blades turning around an open triangle.
+// Traced from the brand artwork into a 64-unit box. src/components/Logo.tsx renders the same path.
 
 export const PULSE = "#F2474B";
 export const INK = "#EFE8E2";
 export const NIGHT = "#12100F";
 
-export function markShapes(color, width = 6.5) {
-  return `
-  <g fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13 7 C13 22 32 20 32 34"/>
-    <path d="M32 5 L32 34"/>
-    <path d="M51 7 C51 22 32 20 32 34"/>
-  </g>
-  <circle cx="32" cy="46" r="11" fill="${color}"/>
-  <circle cx="32" cy="46" r="4.2" fill="${NIGHT}"/>`;
+export const MARK_PATH = "M 36.03 0.24 C 32.51 1.06, 32.03 4.97, 34.65 11.45 C 36.96 17.17, 41.14 24.92, 46.95 34.25 C 48.37 36.53, 51.16 40.75, 51.29 40.84 C 51.72 41.1, 54.54 38.78, 56.11 36.85 C 60.54 31.44, 61.02 25.3, 57.56 18.01 C 53.64 9.74, 45.63 2.04, 39.27 0.42 C 38.22 0.15, 36.76 0.07, 36.03 0.24 M 21.28 18.05 C 16.88 18.53, 13.96 19.73, 10.83 22.33 C 4.25 27.8, -0.7 41.02, 0.89 48.84 C 2.04 54.48, 5.94 54.04, 11.15 47.69 C 13.82 44.43, 17.25 39.06, 22.09 30.54 C 23.15 28.67, 24.22 26.78, 24.47 26.35 C 24.86 25.67, 27.22 21.4, 27.93 20.09 C 28.23 19.55, 28.21 19.52, 27.55 19.19 C 26.05 18.43, 22.96 17.87, 21.28 18.05 M 32.66 28.11 C 32.33 28.67, 31.35 30.32, 30.48 31.79 C 27.81 36.26, 25.15 40.79, 25.15 40.84 C 25.15 40.87, 28.83 40.89, 33.32 40.89 C 39.84 40.89, 41.48 40.86, 41.44 40.76 C 41.39 40.64, 38.15 35.15, 35.91 31.37 C 35.48 30.65, 34.73 29.39, 34.24 28.58 C 33.76 27.76, 33.34 27.09, 33.31 27.09 C 33.28 27.09, 32.99 27.55, 32.66 28.11 M 32.47 47.33 C 28.55 47.45, 22.96 47.92, 21.03 48.28 L 20.73 48.34 20.79 49.24 C 20.91 51.23, 22.43 54.83, 24.13 57.12 C 28.1 62.49, 35.81 64.79, 45.6 63.53 C 52.37 62.65, 59.41 60.02, 62.09 57.36 C 65.19 54.29, 62.8 51.47, 55.4 49.47 C 49.72 47.93, 40.6 47.08, 32.47 47.33";
+
+/** The mark alone, filled with one colour, inside a 64-unit box. */
+export function markShapes(color) {
+  return `<path d="${MARK_PATH}" fill="${color}" fill-rule="evenodd"/>`;
 }
