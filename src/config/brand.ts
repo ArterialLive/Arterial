@@ -17,8 +17,8 @@ export const BRAND = {
   slogan: "Memecoin fees flowing live to NFT collections.",
   description:
     "Arterial pairs every memecoin with an NFT collection on Robinhood Chain. Most of its creator fees flow into a vault that can only buy that collection's floor, and the NFTs go back to holders.",
-  x: "https://x.com/arterial",
-  xHandle: "@arterial",
+  x: "https://x.com/ArterialLive",
+  xHandle: "@ArterialLive",
   /** Public GitHub repo. Empty hides every GitHub link on the site. */
   github: "https://github.com/ArterialLive/Arterial" as string,
   ca: CA as string,

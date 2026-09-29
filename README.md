@@ -1,6 +1,6 @@
 # Arterial
 
-**Memecoin fees flowing live to NFT collections.** $ARTERIAL · Robinhood Chain · [arterial.live](https://arterial.live) · [@arterial](https://x.com/arterial)
+**Memecoin fees flowing live to NFT collections.** $ARTERIAL · Robinhood Chain · [arterial.live](https://arterial.live) · [@ArterialLive](https://x.com/ArterialLive)
 
 ## The problem
 
